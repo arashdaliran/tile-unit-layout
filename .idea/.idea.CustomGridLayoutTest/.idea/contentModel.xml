@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Unity Projects\CustomGridLayoutTest" t="IncludeRecursive">
+      <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Plugins" t="Include">
+          <e p="GridLayout" t="Include">
+            <e p="VariableGridCell.cs" t="Include" />
+            <e p="VariableGridLayoutGroup.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="GridTest.cs" t="Include" />
+          <e p="UnitBaseLayout" t="Include">
+            <e p="TileUnitElement.cs" t="Include" />
+            <e p="TileUnitElementEditor.cs" t="Include" />
+            <e p="TileUnitLayout.cs" t="Include" />
+            <e p="UnitBaseLayoutEditor.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="CustomGridLayoutTest.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+    <e p="C:\Users\novin\AppData\Local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\novin\AppData\Local\JetBrains\Rider2020.1\resharper-host\Local\Transient\ReSharperHost\v201\SolutionCaches\_CustomGridLayoutTest.-502890306.00" t="ExcludeRecursive" />
+  </component>
+</project>
