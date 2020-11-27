@@ -16,7 +16,7 @@ public class TileUnitLayout : MonoBehaviour
     [SerializeField] private UnitSizeReference unitSizeReference;
     [SerializeField] private float unitMagnitude;
     
-    private int lastStateChildCount;
+    private int check_childCount;
     //private List<int> rowsCapacity = new List<int>();
     private int rowCapacity;
     private List<TileUnitElement> elements = new List<TileUnitElement>();
@@ -25,27 +25,37 @@ public class TileUnitLayout : MonoBehaviour
     private Vector2 currentSlotPosition;
     private Vector2 pivotAdditive;
     private Vector2 anchorPosition;
-    
+    private Rect check_rect;
+
     private RectTransform Rect  => GetComponent<RectTransform>();
+
+    public int UnitCount => unitCount;
+
+    private void Awake()
+    {
+        // Rect.
+    }
+
     private void Update()
     {
-        if (!transform.childCount.Equals(lastStateChildCount))
+        if (!transform.childCount.Equals(check_childCount))
         {
             ChildCountChanged();
-            lastStateChildCount = transform.childCount;
+            check_childCount = transform.childCount;
         }
 
-        //print($"is calculating the mag : {unitSizeReference}");
-        if (forceUpdate)
+        if (Rect.rect != check_rect)
         {
+            CalculateUnitMagnitude();
+            ReArrangeChildren();
+            check_rect = Rect.rect;
         }
+        
     }
     
     private void ChildCountChanged()
     {
-        print("Children Count Changed");
-        if(unitSizeReference == UnitSizeReference.FitToParentDimension)
-            ReImportElements();
+        ReImportElements();
         SortElements();
         ReArrangeChildren();
     }
@@ -54,17 +64,13 @@ public class TileUnitLayout : MonoBehaviour
     {
         var sorted = elements.OrderBy(element => element.Priority);
         elements = sorted.ToList();
-        FixChildSiblingIndex();
     }
 
-    private void FixChildSiblingIndex()
+    public void SortAndReArrange()
     {
-        foreach (var tileUnitElement in elements)
-        {
-            tileUnitElement.transform.SetAsLastSibling();
-        }
+        SortElements();
+        ReArrangeChildren();
     }
-
     private void ReImportElements()
     {
         elements.Clear();
@@ -81,11 +87,9 @@ public class TileUnitLayout : MonoBehaviour
             elements.Add(element);
         }
     }
-
-    private void ReArrangeChildren()
+    public void ReArrangeChildren()
     {
         ResetSignAndStartPadding();
-        CalculateUnitMagnitude();
         foreach (var element in elements)
         {  
             var rect = element.Rect;
@@ -96,8 +100,6 @@ public class TileUnitLayout : MonoBehaviour
             SetElementPosition(rect);
         }
     }
-
-
     private void SetElementSize(TileUnitElement element)
     {
         var extendedSize = element.TileUnits * unitMagnitude + (element.TileUnits - 1) * spacing; var elementRect = element.Rect.rect;
@@ -114,10 +116,12 @@ public class TileUnitLayout : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
     }
-
     private void CalculateUnitMagnitude()
     {
+        if(unitSizeReference == UnitSizeReference.ManualInput)
+            return;
         float directionParentMagnitude;
         int pads;
         switch (startingAxis)
@@ -140,7 +144,13 @@ public class TileUnitLayout : MonoBehaviour
         var pos =currentSlotPosition + (pivotAdditive + elementRect.pivot) * elementRect.sizeDelta;
         elementRect.anchoredPosition = pos;
     }
-
+    public void RebuildLayout()
+    {
+        CalculateUnitMagnitude();
+        ReImportElements();
+        SortElements();
+        ReArrangeChildren();
+    }
     private void SetNextSlotPosition(TileUnitElement element)
     {
         float x;
@@ -169,12 +179,12 @@ public class TileUnitLayout : MonoBehaviour
         switch (startingAxis)
         {
             case Axis.Horizontal:
-                 x =startPadding.x + signMultiplier.x * offset;
+                 x =signMultiplier.x * (startPadding.x +  offset);
                  y = currentSlotPosition.y;
                  break;
             case Axis.Vertical:
                 x =currentSlotPosition.x ;
-                y = startPadding.y + signMultiplier.y * offset;
+                y = signMultiplier.y * (startPadding.y + offset);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -221,6 +231,9 @@ public class TileUnitLayout : MonoBehaviour
     
     private void OnValidate()
     {
+        if (unitCount < 1)
+            unitCount = 1;
+        CalculateUnitMagnitude();
         ReArrangeChildren();
     }
 

@@ -1,8 +1,9 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(TileUnitLayout))]
 [CanEditMultipleObjects]
-public class UnitBaseLayoutEditor : Editor
+public class TileUnitLayoutEditor : Editor
 {
     private SerializedProperty padding;
     private SerializedProperty spacing;
@@ -30,7 +31,7 @@ public class UnitBaseLayoutEditor : Editor
 
     private void InitializeProperties()
     {
-        m_target = (TileUnitLayout) target;
+        m_target = target as TileUnitLayout;
         padding = serializedObject.FindProperty("padding");
         spacing = serializedObject.FindProperty("spacing");
         unitCount = serializedObject.FindProperty("unitCount");
@@ -53,5 +54,10 @@ public class UnitBaseLayoutEditor : Editor
         {
             EditorGUILayout.PropertyField(unitMagnitude);
         }
+        
+        
+        //Create a button for rebuilding 
+        if(GUILayout.Button("Rebuild Layout"))
+            m_target.RebuildLayout();
     }
 }
